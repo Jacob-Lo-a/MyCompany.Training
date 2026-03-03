@@ -10,4 +10,6 @@
 ### 第 2 天：C# 12 現代化語法精進
 1. 使用主要建構子方法建立 `Order類別`
 2. 宣告兩個`int`陣列，使用集合運算式組成一個陣列
-3. 寫一個switch方法`Discount`，傳入"VIP"回傳0.8、"Normal"回傳、其他字串拋出 `ArgumentException` 錯誤 
+3. 寫一個switch方法`Discount`，傳入"VIP"回傳0.8、"Normal"回傳0.9、其他字串拋出 `ArgumentException` 錯誤 
+
+[參考文件](https://reurl.cc/np6D1D)
