@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 namespace Training.Core
 {
 
-    public class SystemInfo
+    public class Class1
     {
         public string GetOSAndDateTime()
         {
@@ -11,9 +13,12 @@ namespace Training.Core
 
             string currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-            return $"作業系統: {osName}, 時間: {currentTime} 測試";
+            return $"作業系統: {osName}, 時間: {currentTime}";
         }
 
+        
     }
 
+    
 }
+    

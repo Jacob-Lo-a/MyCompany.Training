@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<SystemInfo>();
+builder.Services.AddSingleton<Class1>();
 
 var app = builder.Build();
 
@@ -21,7 +21,7 @@ app.UseHttpsRedirection();
 
 
 
-app.MapGet("/system-info", (SystemInfo systemInfo) =>
+app.MapGet("/system-info", (Class1 systemInfo) =>
 {
     return Results.Ok(systemInfo.GetOSAndDateTime());
 })
