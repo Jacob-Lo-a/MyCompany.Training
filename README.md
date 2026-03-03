@@ -12,4 +12,4 @@
 2. 宣告兩個`int`陣列，使用集合運算式組成一個陣列
 3. 寫一個switch方法`Discount`，傳入"VIP"回傳0.8、"Normal"回傳0.9、其他字串拋出 `ArgumentException` 錯誤 
 
-[參考文件](https://reurl.cc/np6D1D)
+[參考文件](https://reurl.cc/qpz07y)
