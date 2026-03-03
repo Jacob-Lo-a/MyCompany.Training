@@ -37,10 +37,10 @@ namespace Training.Core
                 default:
                     throw new ArgumentException("請輸入VIP 或 Normal");
             }
-            
+
         }
 
-        
+
     }
 
     //新寫法(c#12)
@@ -56,17 +56,15 @@ namespace Training.Core
             int[] combined = [.. a, .. b]; //[1, 2, 3, 4, 5, 6]
         }
 
-        public double Discount2(string status)
+        public double Discount2(string status) => status switch
         {
-            double coupong = status switch
-            {
-                "VIP" => 0.8,
-                "Normal" => 0.9,
-                _ => throw new ArgumentException("please input VIP or Normal")
-            };
-            return coupong;
-        }
-        
+            "VIP" => 0.8,
+            "Normal" => 0.9,
+            _ => throw new ArgumentException("please input VIP or Normal")
+        };
+
+
+
     }
 
 
