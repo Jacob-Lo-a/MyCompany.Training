@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Training.Core
 {
+    //舊寫法
     public class Order1
     {
         private int orderId;
@@ -17,14 +18,12 @@ namespace Training.Core
             this.amount = amount;
         }
 
-        public int OrderId { get; set; }
-        public int Amount { get; set; }
 
-        public void CollectionExpressions()
+        public void CollectionExpressions1()
         {
-            int[] a = [1, 2, 3];
-            int[] b = [4, 5, 6];
-            int[] combined = [.. a, .. b];
+            int[] a = { 1, 2, 3 };
+            int[] b = { 4, 5, 6 };
+            int[] combined = a.Concat(b).ToArray();
         }
 
         public double Discount1(string status)
@@ -41,6 +40,22 @@ namespace Training.Core
             
         }
 
+        
+    }
+
+    //新寫法(c#12)
+    public class Order2(int orderId, int amount)
+    {
+        public int OrderId { get; set; } = orderId;
+        public int Amount { get; set; } = amount;
+
+        public void CollectionExpressions2()
+        {
+            int[] a = [1, 2, 3];
+            int[] b = [4, 5, 6];
+            int[] combined = [.. a, .. b]; //[1, 2, 3, 4, 5, 6]
+        }
+
         public double Discount2(string status)
         {
             double coupong = status switch
@@ -51,11 +66,8 @@ namespace Training.Core
             };
             return coupong;
         }
+        
     }
-    public class Order2(int orderId, int amount)
-    {
-        public int OrderId { get; set; } = orderId;
-        public int Amount { get; set; } = amount;
-    }
+
 
 }
