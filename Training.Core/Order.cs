@@ -23,7 +23,7 @@ namespace Training.Core
         {
             int[] a = { 1, 2, 3 };
             int[] b = { 4, 5, 6 };
-            int[] combined = a.Concat(b).ToArray();
+            int[] combined = a.Concat(b).ToArray(); //{ 1, 2, 3, 4, 5, 6 }
         }
 
         public double Discount1(string status)
