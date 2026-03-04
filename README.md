@@ -13,3 +13,14 @@
 3. 寫一個switch方法`Discount`，傳入"VIP"回傳0.8、"Normal"回傳0.9、其他字串拋出 `ArgumentException` 錯誤 
 
 [參考文件](https://reurl.cc/qpz07y)
+
+### 第 3 天：LINQ 資料操控與延遲執行
+1. 建一個`List`，裡面塞 50 筆 `Student` 資料（姓名、分數、班級）
+2. 練習實作 LINQ表達式 和 Lambda運算式
+   1. 找出所有不及格的學生，依分數低到高排序
+   2. 只找出所有學生的名字，組成一個新陣列
+   3. 依照班級分組，算出A班和B班各自的平均分數
+
+[參考文件LINQ](https://reurl.cc/ovzbzl)
+
+[參考文件Lambda](https://reurl.cc/xWxbxN)
