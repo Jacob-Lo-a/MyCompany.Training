@@ -7,6 +7,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<Class1>();
+builder.Services.AddSingleton<Linq>();
 
 var app = builder.Build();
 
@@ -26,6 +27,14 @@ app.MapGet("/system-info", (Class1 systemInfo) =>
     return Results.Ok(systemInfo.GetOSAndDateTime());
 })
 .WithName("GetSystemInfo")
+.WithOpenApi();
+
+app.MapGet("/linq-test", (Linq linq) =>
+{
+    linq.test();
+    return Results.Ok("Linq test executed successfully");
+})
+.WithName("LinqTest")
 .WithOpenApi();
 
 app.Run();
