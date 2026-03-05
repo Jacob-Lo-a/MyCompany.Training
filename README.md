@@ -24,3 +24,13 @@
 [參考文件LINQ](https://reurl.cc/ovzbzl)
 
 [參考文件Lambda](https://reurl.cc/xWxbxN)
+
+### 第 4 天：非同步 (Async/Await) 與死結預防
+1. 寫一個方法 `DownloadDataAsync` ，裡面用 `Task.Delay(2000)` 假裝去網路下載資料耗時兩秒
+2. 在 API 呼叫次方法兩次
+   1. 加三次 `await`， API 總共花了 6 秒才回傳
+   2. 用 `Task.WhenAll` 把三個任務包起來， API 只花了 2 秒就回傳
+3. 加上 `CancellationToken (取消權杖)`，當網頁被關閉時，伺服器可以立刻停止下載
+
+[參考資料](https://reurl.cc/8eloey)
+
