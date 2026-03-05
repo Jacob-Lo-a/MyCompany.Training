@@ -14,7 +14,7 @@ namespace Training.Core
         {
             Random random = new Random();
             string[] grades = ["A", "B"];
-            var faker = new Faker("en");
+            var faker = new Faker("en"); // Bogus套件 生成假資料
 
             //建立學生資料
             List<Student> students = new List<Student>();
