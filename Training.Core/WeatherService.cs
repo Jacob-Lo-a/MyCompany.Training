@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Training.Core
 {
-    public class WeatherService
+    public class WeatherService // 修改繼承抽象介面
     {
         private readonly IWeatherService _weatherService;
 

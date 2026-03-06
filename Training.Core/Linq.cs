@@ -68,8 +68,6 @@ namespace Training.Core
         }
         public Dictionary<string, double> CalculateAverageScoreByClass(List<Student> students)
         {
-            if (students == null || students.Count == 0)
-                throw new ArgumentException("Student list cannot be empty");
 
             var result = students
                 .GroupBy(s => s.Grade)

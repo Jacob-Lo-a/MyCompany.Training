@@ -5,7 +5,7 @@ using FluentAssertions;
 
 namespace TestWeather
 {
-    public class UnitTest1
+    public class WheatherTest
     {
         [Fact]
         public void CheckWeather_ShouldReturnSunny_WhenTempIs25()

@@ -34,6 +34,27 @@ namespace TestWeather
             //FluentAssertions
             result["A"].Should().Be(90);
             result["B"].Should().Be(70);
+
+        }
+        [Fact]
+        public void ListIsNull_ShouldNotReturnFalse()
+        {
+            // Arrange
+            var students = new List<Student>();
+            
+
+            var service = new Linq();
+
+            // Act
+            var result = service.CalculateAverageScoreByClass(students);
+
+            // Assert
+            Assert.Equal(90, result["A"]);
+            Assert.Equal(70, result["B"]);
+            
+            //FluentAssertions
+            
+
         }
     }
 }
