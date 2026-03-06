@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,19 +13,9 @@ namespace Training.Core
     {
         public void test()
         {
-            Random random = new Random();
-            string[] grades = ["A", "B"];
-            var faker = new Faker("en"); // Bogus套件 生成假資料
-
-            //建立學生資料
-            List<Student> students = new List<Student>();
-            for (int i = 0; i < 50; i++)
-            {
-                Student student = new Student($"{faker.Name.FirstName()}", random.Next(1, 101), grades[random.Next(0, 2)]);
-                students.Add(student);
-            }
-            //不及格的學生
+            var students = GenerateStudents();
             
+            //不及格的學生
             var failedStudents = from student in students
                                  where student.Score < 60
                                  orderby student.Score
@@ -74,7 +65,36 @@ namespace Training.Core
             {
                 Console.WriteLine($"班級: {item.grade}cd 平均分數: {item.averageScore:F2}");
             }
+        }
+        public Dictionary<string, double> CalculateAverageScoreByClass(List<Student> students)
+        {
+            if (students == null || students.Count == 0)
+                throw new ArgumentException("Student list cannot be empty");
 
+            var result = students
+                .GroupBy(s => s.Grade)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Average(s => s.Score)
+                );
+
+            return result;
+        }
+
+        public List<Student> GenerateStudents()
+        {
+            Random random = new Random();
+            string[] grades = ["A", "B"];
+            var faker = new Faker("en"); // Bogus套件 生成假資料
+
+            //建立學生資料
+            List<Student> students = new List<Student>();
+            for (int i = 0; i < 50; i++)
+            {
+                Student student = new Student($"{faker.Name.FirstName()}", random.Next(1, 101), grades[random.Next(0, 2)]);
+                students.Add(student);
+            }
+            return students;
         }
     }
     public class Student(string name, int score, string grade)

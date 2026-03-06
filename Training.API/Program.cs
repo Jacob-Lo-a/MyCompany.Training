@@ -70,8 +70,8 @@ app.MapGet("/whenAll-test", async (Async a, CancellationToken cancellationToken)
     Task<string> r1 = a.DownloadDataAsync(1, cancellationToken);
     Task<string> r2 = a.DownloadDataAsync(2, cancellationToken);
     Task<string> r3 = a.DownloadDataAsync(3, cancellationToken);
-    
-   
+
+
     var results = await Task.WhenAll(r1, r2, r3);
     stopWatch.Stop();
 
@@ -87,4 +87,3 @@ app.MapGet("/whenAll-test", async (Async a, CancellationToken cancellationToken)
 
 
 app.Run();
-

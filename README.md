@@ -34,3 +34,14 @@
 
 [參考資料](https://reurl.cc/8eloey)
 
+### 第 5 天：單元測試 (xUnit) 與品質防護網
+1. 針對第 3 天寫的「學生分數計算」，寫兩個測試案例
+   1. 測試算出來的平均分數是否正確
+   2. 如果傳入空的 `List`，會不會噴錯
+2. 把原生的 `Assert.Equal(100, result)` 改成 `FluentAssertions` 的 `result.Should().Be(100)`
+3. 寫一個 `IWeatherService` 介面，用 MOQ 創造一個假的 Service。設定呼叫 `GetTemp()` 時固定回傳25度，測試在25度時回不會回傳「天氣晴朗」
+
+[參考資料 xUnit](https://learn.microsoft.com/zh-tw/dotnet/core/testing/unit-testing-csharp-with-xunit)
+
+[參考資料 MOQ](https://ironpdf.com/zh-hant/blog/net-help/moq-csharp-guide/)
+
