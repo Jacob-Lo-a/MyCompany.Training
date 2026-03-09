@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Training.API.Middlewares;
 using Training.Core;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +17,7 @@ builder.Services.AddSingleton<Async>();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -23,7 +26,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<RequestLogMiddleware>();
 
 
 app.MapGet("/system-info", (Class1 systemInfo) =>
@@ -51,7 +55,7 @@ app.MapGet("/async-test", async (Async a, CancellationToken cancellationToken) =
     var r3 = await a.DownloadDataAsync(3, cancellationToken);
 
     stopWatch.Stop();
-
+    
     return Results.Ok(new
     {
         Results = new[] { r1, r2, r3 },
@@ -85,5 +89,12 @@ app.MapGet("/whenAll-test", async (Async a, CancellationToken cancellationToken)
 .WithName("whenAll")
 .WithOpenApi();
 
+app.MapGet("/error-test", () =>
+{
+    throw new Exception("Something went wrong!");
+})
+.WithName("errorTest")
+.WithOpenApi();
 
 app.Run();
+
