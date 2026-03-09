@@ -45,3 +45,8 @@
 
 [參考資料 MOQ](https://ironpdf.com/zh-hant/blog/net-help/moq-csharp-guide/)
 
+### 第 6 天：Middleware (中介軟體) 與請求生命週期
+1. 寫一個「計算 API 執行時間」的 `Middleware` ，計算總花費時間並印出來
+2. 寫一個「全域錯誤處理 (Global Exception Handling)」Middleware，只要拋出 Exception，用 middleware 攔截，並回傳包裝好的 JSON 錯誤格式
+
+[參考資料](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/middleware?view=aspnetcore-10.0)
