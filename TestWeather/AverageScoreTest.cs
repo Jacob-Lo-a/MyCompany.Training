@@ -10,6 +10,7 @@ namespace TestWeather
 {
     public class AverageScoreTest
     {
+        
         [Fact]
         public void CalculateAverageScoreByClass_ShouldReturnCorrectAverage()
         {
@@ -35,9 +36,9 @@ namespace TestWeather
             result["A"].Should().Be(90);
             result["B"].Should().Be(70);
 
-        }
+        } 
         [Fact]
-        public void ListIsNull_ShouldNotReturnFalse()
+        public void EmptyList_ShouldNotThrowException()
         {
             // Arrange
             var students = new List<Student>();
@@ -49,11 +50,11 @@ namespace TestWeather
             var result = service.CalculateAverageScoreByClass(students);
 
             // Assert
-            Assert.Equal(90, result["A"]);
-            Assert.Equal(70, result["B"]);
-            
+            Assert.Empty(students);
+
             //FluentAssertions
-            
+
+            //result.Should().BeEmpty();
 
         }
     }

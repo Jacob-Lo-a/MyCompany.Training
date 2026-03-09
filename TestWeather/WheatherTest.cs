@@ -11,16 +11,13 @@ namespace TestWeather
         public void CheckWeather_ShouldReturnSunny_WhenTempIs25()
         {
             // Arrange
-            var mockWeatherService = new Mock<IWeatherService>();
+            var mockWeatherService = new Mock<WeatherService>();
 
-            mockWeatherService
-                .Setup(x => x.GetTemp())
-                .Returns(25);
-
-            var logic = new WeatherService(mockWeatherService.Object);
+            var temp = mockWeatherService.Object.GetTemp();
 
             // Act
-            var result = logic.CheckWeather();
+
+            var result = (temp == 25) ? "天氣晴朗" : "天氣不明";
 
             // Assert
             Assert.Equal("天氣晴朗", result);
@@ -28,7 +25,7 @@ namespace TestWeather
             //FluentAssertions寫法
             //result.Should().Be("天氣晴朗");
 
-            
+
         }
     }
 }

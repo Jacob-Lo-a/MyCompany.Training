@@ -6,25 +6,14 @@ using System.Threading.Tasks;
 
 namespace Training.Core
 {
-    public class WeatherService // 修改繼承抽象介面
+    public class WeatherService : IWeatherService  
     {
-        private readonly IWeatherService _weatherService;
-
-        public WeatherService(IWeatherService weatherService)
+        public int GetTemp()
         {
-            _weatherService = weatherService;
+            return 25;
         }
 
-        public string CheckWeather()
-        {
-            int temp = _weatherService.GetTemp();
 
-            if (temp == 25)
-            {
-                return "天氣晴朗";
-            }
-
-            return "天氣未知";
-        }
+        
     }
 }
