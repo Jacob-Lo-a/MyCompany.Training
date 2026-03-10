@@ -14,6 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<Class1>();
 builder.Services.AddSingleton<Linq>();
 builder.Services.AddSingleton<Async>();
+builder.Services.AddScoped<IGuidGenerator, MyGuidGenerator>();
+
 
 var app = builder.Build();
 
@@ -96,5 +98,18 @@ app.MapGet("/error-test", () =>
 .WithName("errorTest")
 .WithOpenApi();
 
+
+app.MapGet("/guid", (IGuidGenerator g1, IGuidGenerator g2) =>
+{
+    return new
+    {
+        Generator1 = g1.GetGuid(),
+        Generator2 = g2.GetGuid()
+    };
+})
+.WithName("guidTest")
+.WithOpenApi();
+
 app.Run();
+
 
