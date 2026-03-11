@@ -56,4 +56,12 @@
 2. 呼叫 API ，印出這兩個 Generator 產生的 Guid
    2.1 使用 `AddTransient` 時， Guid 不一樣
    2.2 改使用 `AddScoped` 時， Guid 是一樣的
+  
 [參考資料](https://learn.microsoft.com/zh-tw/dotnet/core/extensions/dependency-injection/usage)
+
+### 第 8 天：設定檔 (Configuration) 與環境變數
+1. 在 `appsettings.json` 裡新增一塊 `EmailSettings` ，裡面有兩個參數 `SmtpServer` 和 `Port`
+2. 寫一個類別 `EmailOptions.cs` ， 屬性名稱對應剛剛的 JSON
+3. 在 `Program.cs` 中使用 `builder.Services.Configure<EmailOptions>(...)`綁定設定，最後在 API 中用 DI 注入 `IOptions<EmailOptions>` 把數值印在畫面上
+
+[參考資料](https://igouist.github.io/post/2024/08/dotnet-ioptions/)

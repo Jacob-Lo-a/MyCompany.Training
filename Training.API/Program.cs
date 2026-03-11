@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Training.API.Middlewares;
 using Training.Core;
@@ -15,7 +17,9 @@ builder.Services.AddSingleton<Class1>();
 builder.Services.AddSingleton<Linq>();
 builder.Services.AddSingleton<Async>();
 builder.Services.AddScoped<IGuidGenerator, MyGuidGenerator>();
-
+builder.Services.Configure<EmailOptions>(
+    builder.Configuration.GetSection("EmailSettings")
+);
 
 var app = builder.Build();
 
@@ -110,6 +114,11 @@ app.MapGet("/guid", (IGuidGenerator g1, IGuidGenerator g2) =>
 .WithName("guidTest")
 .WithOpenApi();
 
+app.MapGet("/email", (IOptions<EmailOptions> options) =>
+{
+    return options.Value;
+})
+.WithName("emailTest")
+.WithOpenApi();
+
 app.Run();
-
-
