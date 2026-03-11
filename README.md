@@ -45,3 +45,15 @@
 
 [參考資料 MOQ](https://ironpdf.com/zh-hant/blog/net-help/moq-csharp-guide/)
 
+### 第 6 天：Middleware (中介軟體) 與請求生命週期
+1. 寫一個「計算 API 執行時間」的 `Middleware` ，計算總花費時間並印出來
+2. 寫一個「全域錯誤處理 (Global Exception Handling)」Middleware，只要拋出 Exception，用 middleware 攔截，並回傳包裝好的 JSON 錯誤格式
+
+[參考資料](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/middleware?view=aspnetcore-10.0)
+
+### 第 7 天：依賴注入 (DI) 的藝術
+1. 實作一個 Guid 產生器，在 Minimal API 的建構子中，同時注入兩次 `IGuidGenerator`
+2. 呼叫 API ，印出這兩個 Generator 產生的 Guid
+   2.1 使用 `AddTransient` 時， Guid 不一樣
+   2.2 改使用 `AddScoped` 時， Guid 是一樣的
+[參考資料](https://learn.microsoft.com/zh-tw/dotnet/core/extensions/dependency-injection/usage)
