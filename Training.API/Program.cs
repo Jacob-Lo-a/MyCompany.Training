@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Training.API.Middlewares;
 using Training.Core;
+using Training.Core.DTOs;
+using Training.Core.Models;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +122,22 @@ app.MapGet("/email", (IOptions<EmailOptions> options) =>
     return options.Value;
 })
 .WithName("emailTest")
+.WithOpenApi();
+
+app.MapGet("/DTO", () =>
+{
+    var user = new User
+    {
+        Id = 1,
+        Account = "testUser",
+        Password = "123456",
+        CreatedDate = DateTime.Now
+    };
+    var result = user.Adapt<UserResponseDTO>();
+
+    return result;
+})
+.WithName("DTOTest")
 .WithOpenApi();
 
 app.Run();

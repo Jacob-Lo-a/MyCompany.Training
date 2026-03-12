@@ -65,3 +65,10 @@
 3. 在 `Program.cs` 中使用 `builder.Services.Configure<EmailOptions>(...)`綁定設定，最後在 API 中用 DI 注入 `IOptions<EmailOptions>` 把數值印在畫面上
 
 [參考資料](https://igouist.github.io/post/2024/08/dotnet-ioptions/)
+
+### 第 9 天：DTO 與資料映射 (Mapping)
+1. 建立一個 `User` 實體類別 ( `Id`, `Account`, `Password`, `CreatedDate`)
+2. 建立一個 `UserResponseDTO` 類別 (`Account`, `CreatedDate`)
+3. 寫一個假資料 API 回傳 `User` 資訊。使用 Mapster 的擴充方法 `.Adapt<UserResponseDTO>()` ，畫面上只看到 `Account` 和 `CreatedDate`
+
+[參考資料](https://dotblogs.com.tw/Null/2020/03/23/221949)
