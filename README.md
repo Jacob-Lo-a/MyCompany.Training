@@ -72,3 +72,15 @@
 3. 寫一個假資料 API 回傳 `User` 資訊。使用 Mapster 的擴充方法 `.Adapt<UserResponseDTO>()` ，畫面上只看到 `Account` 和 `CreatedDate`
 
 [參考資料](https://dotblogs.com.tw/Null/2020/03/23/221949)
+
+### 第 10 天：資料驗證 (FluentValidation)
+1. 建立一個 `RegisterRequestDTO` ( `Username`, `Password`, `Email`, `Age`)
+2. 寫一個 `RegisterValidator` 繼承自 `AbstractValidator<RegisterRequestDTO>`
+3. 實作以下防護規則
+   3.1 帳號不可為空，且長度需在 6~20 字元之間
+   3.2 密碼必須包含至少一個大寫字母與數字(使用 `.Matches()`)
+   3.3 年齡必須大於等於 18 歲
+   3.4 Email 格式必須正確
+4. 當前端的資料觸發驗證失敗時，確認 API 有回傳 `400 Bad Request` ，且 JSON 有詳細指出是哪個欄位錯誤
+
+[參考文件](https://docs.fluentvalidation.net/en/latest/aspnet.html)

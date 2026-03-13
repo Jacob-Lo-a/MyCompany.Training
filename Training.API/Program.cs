@@ -8,6 +8,8 @@ using Training.Core;
 using Training.Core.DTOs;
 using Training.Core.Models;
 using Mapster;
+using FluentValidation;
+using Training.Core.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,9 @@ builder.Services.AddScoped<IGuidGenerator, MyGuidGenerator>();
 builder.Services.Configure<EmailOptions>(
     builder.Configuration.GetSection("EmailSettings")
 );
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddScoped<IValidator<RegisterRequestDTO>, RegisterValidator>();
+
 
 var app = builder.Build();
 
@@ -138,6 +143,30 @@ app.MapGet("/DTO", () =>
     return result;
 })
 .WithName("DTOTest")
+.WithOpenApi();
+
+app.MapPost("/register", async (
+    RegisterRequestDTO request,
+    IValidator<RegisterRequestDTO> validator) =>
+{
+    var result = await validator.ValidateAsync(request);
+
+    if (!result.IsValid)
+    {
+        var errors = result.Errors
+            .GroupBy(e => e.PropertyName)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(e => e.ErrorMessage).ToArray()
+            );
+
+        return Results.ValidationProblem(errors);
+    }
+
+    return Results.Ok(new { message = "µù¥U¦¨¥\" });
+
+})
+.WithName("register")
 .WithOpenApi();
 
 app.Run();
