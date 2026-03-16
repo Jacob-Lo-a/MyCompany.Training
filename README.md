@@ -84,3 +84,10 @@
 4. 當前端的資料觸發驗證失敗時，確認 API 有回傳 `400 Bad Request` ，且 JSON 有詳細指出是哪個欄位錯誤
 
 [參考文件](https://docs.fluentvalidation.net/en/latest/aspnet.html)
+
+### 第 11 天：EF Core 基礎與 DB First (反向工程)
+1. 執行 `Scaffold-DbContext` 指令，在 Models 資料夾中生成 `BookStoreDbContext.cs` 與 5 張實體類別表
+2. 設定 Foreign Key 的欄位會自動生成 public virtual 這個導覽屬性 
+3. 在 `appsettings.json` 設定連線字串，在 Program.cs 註冊 DbContext，寫一隻 API 撈取 Books 表的資料
+
+[參考文件](https://learn.microsoft.com/zh-tw/ef/core/dbcontext-configuration/)

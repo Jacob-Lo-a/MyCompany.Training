@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Training.API.Middlewares;
 using Training.Core;
 using Training.Core.DTOs;
-using Training.Core.Models;
 using Mapster;
 using FluentValidation;
 using Training.Core.Validators;
+using Microsoft.EntityFrameworkCore;
+using Training.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,9 @@ builder.Services.Configure<EmailOptions>(
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<IValidator<RegisterRequestDTO>, RegisterValidator>();
 
+builder.Services.AddDbContext<BookStoreDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("BookStoreDB")));
 
 var app = builder.Build();
 
@@ -131,7 +135,7 @@ app.MapGet("/email", (IOptions<EmailOptions> options) =>
 
 app.MapGet("/DTO", () =>
 {
-    var user = new User
+    var user = new Users
     {
         Id = 1,
         Account = "testUser",
@@ -168,5 +172,13 @@ app.MapPost("/register", async (
 })
 .WithName("register")
 .WithOpenApi();
+
+app.MapGet("/books", (BookStoreDbContext db) =>
+{
+    return db.Books.ToList();
+})
+.WithName("books")
+.WithOpenApi();
+
 
 app.Run();
