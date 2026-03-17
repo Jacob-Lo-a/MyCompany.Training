@@ -91,3 +91,11 @@
 3. 在 `appsettings.json` 設定連線字串，在 Program.cs 註冊 DbContext，寫一隻 API 撈取 Books 表的資料
 
 [參考文件](https://learn.microsoft.com/zh-tw/ef/core/dbcontext-configuration/)
+
+### 第 12 天：NLog 導入與擊敗 N+1 效能問題
+1. 在 Nuget 安裝 `NLog.Web.AspNetCore` 套件
+2. 在 Training.API 根目錄新增 `nlog.config` (XML檔)，把屬性->複製到輸出目錄 改為 有更新時才複製(Copy if newer)
+3. 寫一隻 API 撈取所有 Author，在迴圈裡存取 Author.Books 屬性
+4. 打開 logs/spl-trace.txt 觀察 NLog 補捉到的 SQL 查詢
+
+[參考文件](https://ironpdf.com/zh-hant/blog/net-help/nlog-csharp-guide/)

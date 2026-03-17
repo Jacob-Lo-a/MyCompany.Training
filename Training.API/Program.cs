@@ -1,4 +1,10 @@
+using FluentValidation;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using NLog;
+using NLog.Web;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -6,18 +12,19 @@ using System.Threading.Tasks;
 using Training.API.Middlewares;
 using Training.Core;
 using Training.Core.DTOs;
-using Mapster;
-using FluentValidation;
-using Training.Core.Validators;
-using Microsoft.EntityFrameworkCore;
 using Training.Core.Models;
+using Training.Core.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
 
 builder.Services.AddSingleton<Class1>();
 builder.Services.AddSingleton<Linq>();
@@ -29,9 +36,16 @@ builder.Services.Configure<EmailOptions>(
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddScoped<IValidator<RegisterRequestDTO>, RegisterValidator>();
 
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
 builder.Services.AddDbContext<BookStoreDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("BookStoreDB")));
+        builder.Configuration.GetConnectionString("BookStoreDB"))
+    );
+
+
+
 
 var app = builder.Build();
 
@@ -180,5 +194,28 @@ app.MapGet("/books", (BookStoreDbContext db) =>
 .WithName("books")
 .WithOpenApi();
 
+
+app.MapGet("/authors-nlog", async (BookStoreDbContext db) =>
+{
+    var authors = await db.Authors
+        .Include(a => a.Books) 
+        .ToListAsync();
+
+    var result = new List<object>();
+
+    foreach (var author in authors)
+    {
+        result.Add(new
+        {
+            author.Id,
+            author.Name,
+            BookCount = author.Books.Count
+        });
+    }
+
+    return result;
+})
+.WithName("authors-nlog")
+.WithOpenApi();
 
 app.Run();
