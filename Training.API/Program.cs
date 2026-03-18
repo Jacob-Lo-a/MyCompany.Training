@@ -44,7 +44,12 @@ builder.Services.AddDbContext<BookStoreDbContext>(options =>
         builder.Configuration.GetConnectionString("BookStoreDB"))
     );
 
-
+//忽略循環
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 
 
 var app = builder.Build();
@@ -212,10 +217,78 @@ app.MapGet("/authors-nlog", async (BookStoreDbContext db) =>
             BookCount = author.Books.Count
         });
     }
-
+    
     return result;
 })
 .WithName("authors-nlog")
+.WithOpenApi();
+
+app.MapGet("/AsNoTracking", async (BookStoreDbContext db) =>
+{
+    var books = await db.Books
+        .AsNoTracking()
+        .Include(b => b.Author)
+        .ToListAsync();
+
+    return books;
+})
+.WithName("AsNoTracking")
+.WithOpenApi();
+
+app.MapPost("/Transaction", async (
+    BuyBookRequest request,
+    BookStoreDbContext _dbContext,
+    ILogger<Program> _logger) =>
+{
+    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+    try
+    {
+        var book = await _dbContext.Books
+            .FirstOrDefaultAsync(b => b.Id == request.BookId);
+
+        if (book == null)
+            return Results.NotFound("Book not found");
+
+        if (book.Stock < request.Quantity)
+            throw new Exception("庫存不足");
+
+        book.Stock -= request.Quantity;
+        
+        // 建訂單
+        var order = new Order
+        {
+            OrderNumber = $"ORD-{DateTime.Now:yyyyMMddHHmmss}",
+            UserId = request.UserId,
+            TotalAmount = book.Price * request.Quantity,
+            Status = "Pending",
+            CreatedAt = DateTime.Now
+        };
+
+        _dbContext.Orders.Add(order);
+
+        _dbContext.OrderItems.Add(new OrderItem
+        {
+            BookId = book.Id,
+            Quantity = request.Quantity,
+            UnitPrice = book.Price,
+            Order = order
+        });
+        
+        await _dbContext.SaveChangesAsync(); 
+        await transaction.CommitAsync(); //全部成功才提交
+
+        return Results.Ok(order);
+    }
+    catch (Exception ex)
+    {
+        await transaction.RollbackAsync(); // 出錯立刻還原
+        _logger.LogError(ex, "交易失敗，資料已 Rollback");
+        return Results.Problem("交易失敗");
+    }
+    
+})
+.WithName("Transaction")
 .WithOpenApi();
 
 app.Run();

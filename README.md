@@ -99,3 +99,13 @@
 4. 打開 logs/spl-trace.txt 觀察 NLog 補捉到的 SQL 查詢
 
 [參考文件](https://ironpdf.com/zh-hant/blog/net-help/nlog-csharp-guide/)
+
+### 第 13 天：效能優化與資料庫交易 (Transaction)
+1. 寫一個查詢書籍的 API ，並在 EF Core 語句加上 `.AsNoTracking()`
+2. 寫一個買書 API
+   2.1 扣除 `Books` 庫存
+   2.2 新增 `Orders` 紀錄
+   2.3 使用 `Transaction` 保護
+3. 故意造成錯誤，並去資料庫檢查是否成功 `Rollback`
+
+[參考文件](https://learn.microsoft.com/zh-tw/aspnet/web-forms/overview/data-access/working-with-batched-data/wrapping-database-modifications-within-a-transaction-cs)
