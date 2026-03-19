@@ -1,5 +1,6 @@
 using FluentValidation;
 using Mapster;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NLog;
@@ -12,7 +13,10 @@ using System.Threading.Tasks;
 using Training.API.Middlewares;
 using Training.Core;
 using Training.Core.DTOs;
+using Training.Core.interfaces;
 using Training.Core.Models;
+using Training.Core.Repositories;
+using Training.Core.Services;
 using Training.Core.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +55,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
         System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IBookService, BookService>();
 
 var app = builder.Build();
 
@@ -289,6 +295,14 @@ app.MapPost("/Transaction", async (
     
 })
 .WithName("Transaction")
+.WithOpenApi();
+
+app.MapGet("/repository", (IBookService bookService) =>
+{
+    var result = bookService.GetDiscountBooks();
+    return result;
+})
+.WithName("repository")
 .WithOpenApi();
 
 app.Run();

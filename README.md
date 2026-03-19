@@ -109,3 +109,10 @@
 3. 故意造成錯誤，並去資料庫檢查是否成功 `Rollback`
 
 [參考文件](https://learn.microsoft.com/zh-tw/aspnet/web-forms/overview/data-access/working-with-batched-data/wrapping-database-modifications-within-a-transaction-cs)
+
+### 第 14 天：3-Tier 三層式架構與 Repository 模式
+1. 建立 `IBookRepository` ，裡面只有 `_dbContext` 去查詢資料庫的方法
+2. 建立 `IBookService` ，建構子注入 `IBookRepository`。實作一個方法：呼叫 `Repository` 拿到書本後，寫C#邏輯把所有書本打 8 折
+3. Controller 建構子中注入 `IBookService`。 Controller 只能呼叫 Service 拿資料並回傳
+
+[參考文件](https://igouist.github.io/post/2021/10/newbie-5-3-layer-architecture/)
