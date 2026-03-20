@@ -305,4 +305,52 @@ app.MapGet("/repository", (IBookService bookService) =>
 .WithName("repository")
 .WithOpenApi();
 
+app.MapGet("/GetBooks", async (
+    [AsParameters] BookQueryParameters parameters,
+    BookStoreDbContext context,
+    ILogger<Program> logger,
+    CancellationToken ct) =>
+{ 
+    try
+    {
+        parameters.PageSize = Math.Min(parameters.PageSize, 50);
+
+        IQueryable<Book> query = context.Books.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(parameters.Keyword))
+        {
+            query = query.Where(b => b.Title.Contains(parameters.Keyword));
+        }
+        
+        query = query.OrderBy(b => b.Id);
+
+        var totalCount = await query.CountAsync(ct);
+
+        var books = await query
+            .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+            .Take(parameters.PageSize)
+            .ToListAsync(ct);
+        
+        return Results.Ok(new
+        {
+            Total = totalCount,
+            PageNumber = parameters.PageNumber,
+            PageSize = parameters.PageSize,
+            Data = books
+        });
+    }
+    catch (OperationCanceledException)
+    {
+        logger.LogWarning("使用者取消了耗時的書籍查詢");
+        return Results.StatusCode(499); // 設定 http 狀態
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "查詢書籍時發生未預期錯誤");
+        return Results.Problem("系統發生錯誤"); 
+    }
+})
+.WithName("GetBooks")
+.WithOpenApi();
+
 app.Run();

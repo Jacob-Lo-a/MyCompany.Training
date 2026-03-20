@@ -116,3 +116,10 @@
 3. Controller 建構子中注入 `IBookService`。 Controller 只能呼叫 Service 拿資料並回傳
 
 [參考文件](https://igouist.github.io/post/2021/10/newbie-5-3-layer-architecture/)
+
+### 第 15 天：進階查詢、分頁與 try-catch 防呆機制
+1. 實作 `GetBooks` API ，使用 `IQueryable` 接收分頁與關鍵參數，並實作動態的 `.Where()` 過濾
+2. 在 API　內包覆 try-catch。捕捉特定的 `OperationCanceledException`，並用 NLog 紀錄警告 `_logger.LogWarning`(使用者取消書籍查詢)
+3. 捕捉通用的 Exception 。若拋出不可預期的錯誤，在 catch 紀錄 LogError，並統一回傳 `500 Internal Server Error` 給前端
+
+[參考文件](https://comate.baidu.com/zh/page/7pi2mt2gc3s#5)
