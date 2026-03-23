@@ -10,5 +10,7 @@ namespace Training.Core.interfaces
     public interface IBookRepository
     {
         List<Book> GetAllBooks();
+        Task<Book> AddAsync(Book book);
+        Task SaveChangesAsync();
     }
 }

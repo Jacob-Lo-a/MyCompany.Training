@@ -123,3 +123,10 @@
 3. 捕捉通用的 Exception 。若拋出不可預期的錯誤，在 catch 紀錄 LogError，並統一回傳 `500 Internal Server Error` 給前端
 
 [參考文件](https://comate.baidu.com/zh/page/7pi2mt2gc3s#5)
+
+### 第 16 天：JWT 身分驗證與 3-Tier 會員模組
+1. 建立 `IUserRepository` 與 `IUserService`。在 Service 實作檢查帳號密碼的邏輯，若密碼錯誤，請直接 throw new UnauthorizedAccessException("帳號或密碼錯誤")
+2. 寫一個 /api/auth/login API。呼叫 Service 驗證成功後，使用 `JwtSecurityTokenHandler` 產出一組效期為 1 小時的 JWT 字串，並在 Token 內塞入使用者的 Role (例如 Admin)
+3. 將 Day 14 寫好的 /api/books (新增書籍 API) 加上 [Authorize(Roles = "Admin")]，驗證只有管理員能上架新書。
+
+[參考文件](https://eandev.com/post/software/aspnet-core-authenticaiton-jwt/)

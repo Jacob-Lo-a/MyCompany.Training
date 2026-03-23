@@ -1,16 +1,22 @@
 using FluentValidation;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Web;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using Training.API.Middlewares;
+using Training.API.Repositories;
+using Training.API.Services;
 using Training.Core;
 using Training.Core.DTOs;
 using Training.Core.interfaces;
@@ -22,9 +28,10 @@ using Training.Core.Validators;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
+builder.Services.AddControllers();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -58,6 +65,21 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key"))
+        };
+    });
+
 var app = builder.Build();
 
 
@@ -72,6 +94,9 @@ app.UseHttpsRedirection();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<RequestLogMiddleware>();
 
+app.UseAuthentication(); // ±Ò¥Î JWT ÅçÃÒ
+app.UseAuthorization();  
+app.MapControllers();
 
 app.MapGet("/system-info", (Class1 systemInfo) =>
 {
@@ -211,7 +236,7 @@ app.MapGet("/authors-nlog", async (BookStoreDbContext db) =>
     var authors = await db.Authors
         .Include(a => a.Books) 
         .ToListAsync();
-
+    
     var result = new List<object>();
 
     foreach (var author in authors)
@@ -297,20 +322,13 @@ app.MapPost("/Transaction", async (
 .WithName("Transaction")
 .WithOpenApi();
 
-app.MapGet("/repository", (IBookService bookService) =>
-{
-    var result = bookService.GetDiscountBooks();
-    return result;
-})
-.WithName("repository")
-.WithOpenApi();
 
 app.MapGet("/GetBooks", async (
     [AsParameters] BookQueryParameters parameters,
     BookStoreDbContext context,
     ILogger<Program> logger,
     CancellationToken ct) =>
-{ 
+{   
     try
     {
         parameters.PageSize = Math.Min(parameters.PageSize, 50);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,15 @@ namespace Training.Core.Repositories
             return _dbContext.Books.ToList();
         }
 
-            
+        public async Task<Book> AddAsync(Book book)
+        {
+            await _dbContext.Books.AddAsync(book);
+            return book;
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

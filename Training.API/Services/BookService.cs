@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Training.Core.DTOs;
 using Training.Core.interfaces;
 using Training.Core.Models;
 using Training.Core.Repositories;
@@ -29,5 +30,20 @@ namespace Training.Core.Services
 
             return books;
         }
+        public async Task<Book> CreatedBookAsync(CreateBookDto dto)
+        {
+            var book = new Book
+            {
+                Title = dto.Title,
+                Price = dto.Price,
+                Stock = dto.Stock,
+                AuthorId = dto.AuthorId
+            };
+            await _bookRepository.AddAsync(book);
+            await _bookRepository.SaveChangesAsync();
+
+            return book;
+        }
+
     }
 }

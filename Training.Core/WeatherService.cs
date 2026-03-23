@@ -12,8 +12,5 @@ namespace Training.Core
         {
             return 25;
         }
-
-
-        
     }
 }
