@@ -32,10 +32,10 @@ namespace Training.API.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Account),
+               
                 new Claim(ClaimTypes.Role, user.Role)
             };
-
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),

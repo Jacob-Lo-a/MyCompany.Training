@@ -130,3 +130,11 @@
 3. 將 Day 14 寫好的 /api/books (新增書籍 API) 加上 [Authorize(Roles = "Admin")]，驗證只有管理員能上架新書。
 
 [參考文件](https://eandev.com/post/software/aspnet-core-authenticaiton-jwt/)
+
+### 第 17 天：全域異常處理與 Swagger 完善
+1. 把 Day 15 中 Controller 裡的 try-catch 全部拔掉
+2. 實作 `GlobalExceptionHandler.cs` 並繼承介面 `IExceptionHandler`，攔截到錯誤時，使用 Day 12 設定好的 NLog 記錄 `_logger.LogError(ex, "系統發生未預期錯誤")`，並將狀態碼轉為 HTTP 500 回傳 `ProblemDetails` 格式的 JSON
+3. 在 Program.cs 中設定 SwaggerGen 加入 `JWT AddSecurityDefinition`。為「書籍查詢 API」加上 `<summary>` 註解
+
+[參考文件SwaggerGen](https://igouist.github.io/post/2021/10/swagger-enable-authorize/)
+[參考文件IExceptionHandler](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-10.0)

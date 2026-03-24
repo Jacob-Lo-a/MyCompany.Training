@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
+using NLog.Targets;
 using NLog.Web;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Training.API;
 using Training.API.Middlewares;
 using Training.API.Repositories;
 using Training.API.Services;
@@ -33,7 +35,36 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // JWT 設定
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "請輸入 JWT Token（格式：Bearer {token}）"
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+
+    
+});
 
 
 
@@ -67,6 +98,10 @@ builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {
@@ -83,6 +118,7 @@ builder.Services.AddAuthentication("Bearer")
 var app = builder.Build();
 
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -94,6 +130,7 @@ app.UseHttpsRedirection();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<RequestLogMiddleware>();
 
+app.UseExceptionHandler(_ => { });
 app.UseAuthentication(); // 啟用 JWT 驗證
 app.UseAuthorization();  
 app.MapControllers();
@@ -322,53 +359,4 @@ app.MapPost("/Transaction", async (
 .WithName("Transaction")
 .WithOpenApi();
 
-
-app.MapGet("/GetBooks", async (
-    [AsParameters] BookQueryParameters parameters,
-    BookStoreDbContext context,
-    ILogger<Program> logger,
-    CancellationToken ct) =>
-{   
-    try
-    {
-        parameters.PageSize = Math.Min(parameters.PageSize, 50);
-
-        IQueryable<Book> query = context.Books.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(parameters.Keyword))
-        {
-            query = query.Where(b => b.Title.Contains(parameters.Keyword));
-        }
-        
-        query = query.OrderBy(b => b.Id);
-
-        var totalCount = await query.CountAsync(ct);
-
-        var books = await query
-            .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-            .Take(parameters.PageSize)
-            .ToListAsync(ct);
-        
-        return Results.Ok(new
-        {
-            Total = totalCount,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize,
-            Data = books
-        });
-    }
-    catch (OperationCanceledException)
-    {
-        logger.LogWarning("使用者取消了耗時的書籍查詢");
-        return Results.StatusCode(499); // 設定 http 狀態
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "查詢書籍時發生未預期錯誤");
-        return Results.Problem("系統發生錯誤"); 
-    }
-})
-.WithName("GetBooks")
-.WithOpenApi();
-
-app.Run();
+app.Run(); 
