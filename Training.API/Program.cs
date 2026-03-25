@@ -9,10 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Targets;
 using NLog.Web;
+using Polly;
+using Polly.Extensions.Http;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Training.API;
@@ -42,7 +45,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Name = "Authorization",
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme = "bearer",
+        Scheme = "Bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
         Description = "請輸入 JWT Token（格式：Bearer {token}）"
@@ -102,7 +105,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddAuthentication("Bearer")
+builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -111,9 +114,32 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key"))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
+            NameClaimType = ClaimTypes.NameIdentifier
+
         };
     });
+
+
+
+// polly套件 失敗了自動重試，最多重試 3 次，每次間隔 2 秒
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
+builder.Services.AddHttpClient("CwaClient", client =>
+{
+    client.BaseAddress = new Uri("https://opendata.cwa.gov.tw/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+})
+.AddPolicyHandler(GetRetryPolicy());
+
+builder.Services.AddScoped<ITaipeiWeatherService, TaipeiWeatherService>();
+
+
 
 var app = builder.Build();
 
@@ -358,5 +384,6 @@ app.MapPost("/Transaction", async (
 })
 .WithName("Transaction")
 .WithOpenApi();
+
 
 app.Run(); 

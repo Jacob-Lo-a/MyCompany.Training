@@ -138,3 +138,11 @@
 
 [參考文件SwaggerGen](https://igouist.github.io/post/2021/10/swagger-enable-authorize/)
 [參考文件IExceptionHandler](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-10.0)
+
+### 第 18 天：HttpClientFactory、Polly 與外部依賴
+1. 安裝 Polly 套件 Microsoft.Extensions.Http.Polly
+2. 使用 `HttpClientFactory` 呼叫外部的 API，寫一個 API (TaipeiWeather) 呼叫中央氣象屬的資料，取得台北市未來三天的天氣預報
+3. 實作 Polly 自動重試 (Retry)。失敗了等 2 秒再試，試了 3 次都不行，才拋出 Exception 讓全域守門員處理
+
+[參考文件Polly](https://www.nuget.org/packages/microsoft.extensions.http.polly/)
+[參考文件IHttpClientFactory](https://learn.microsoft.com/zh-tw/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests)
