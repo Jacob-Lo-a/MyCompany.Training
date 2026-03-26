@@ -19,7 +19,7 @@ namespace Training.API.Controllers
         public async Task<IActionResult> Get()
         {
             var result = await _weatherService.GetWeatherAsync();
-            return Content(result, "application/json");
+            return Ok(result);
         }
     }
 }

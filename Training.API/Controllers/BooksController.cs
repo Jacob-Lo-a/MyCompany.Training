@@ -72,11 +72,7 @@ namespace Training.Core.Controllers
 
             IQueryable<Book> query = _bookStoreDbContext.Books.AsQueryable();
 
-            //  關鍵字搜尋
-            if (!string.IsNullOrWhiteSpace(parameters.Keyword))
-            {
-                query = query.Where(b => b.Title.Contains(parameters.Keyword));
-            }
+            
 
             //  排序
             query = query.OrderBy(b => b.Id);

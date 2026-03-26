@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,11 +8,10 @@ using Training.Core.Models;
 
 namespace Training.Core.interfaces
 {
-    public interface IBookRepository
+    public interface IOrderRepository
     {
-        List<Book> GetAllBooks();
-        Task<Book> AddAsync(Book book);
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task AddAsync(Order order);
         Task SaveChangesAsync();
-        Task<Book?> GetByIdAsync(int id);
     }
 }

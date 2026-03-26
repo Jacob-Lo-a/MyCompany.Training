@@ -137,6 +137,7 @@
 3. 在 Program.cs 中設定 SwaggerGen 加入 `JWT AddSecurityDefinition`。為「書籍查詢 API」加上 `<summary>` 註解
 
 [參考文件SwaggerGen](https://igouist.github.io/post/2021/10/swagger-enable-authorize/)
+
 [參考文件IExceptionHandler](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-10.0)
 
 ### 第 18 天：HttpClientFactory、Polly 與外部依賴
@@ -145,4 +146,17 @@
 3. 實作 Polly 自動重試 (Retry)。失敗了等 2 秒再試，試了 3 次都不行，才拋出 Exception 讓全域守門員處理
 
 [參考文件Polly](https://www.nuget.org/packages/microsoft.extensions.http.polly/)
+
 [參考文件IHttpClientFactory](https://learn.microsoft.com/zh-tw/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests)
+
+### 第 19 天：期末實戰 (Part 1) - 訂單 BLL 與 Transaction
+1. 完成 `OrderService.CreateOrderAsync()` 的商業邏輯實作
+   1. 透過 `BookRepository` 取得要買的書籍
+   2. 檢查庫存是否足夠，如果不足 throw InsufficientStockException
+   3. 扣庫存
+   4. 計算總價並建立 `Order` 物件
+   5. 購買的書本單價寫入 `OrderItem` 物件
+   6. 透過 `OrderRepository` 寫入資料庫並 `SaveChanges`
+   7. `Commit` 交易
+2. 建立一個自定義的例外類別 `InsufficientStockException`，當庫存不足時拋出
+3. 修改 `GlobalExceptionHandler`，當攔截到 `InsufficientStockException` 時，回傳400 Bad Request，並告知前端「某某書本庫存不足」

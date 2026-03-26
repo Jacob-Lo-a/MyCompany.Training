@@ -16,17 +16,34 @@ namespace Training.API
             HttpContext httpContext,
             Exception exception,
             CancellationToken cancellationToken)
-        { 
-         
-            _logger.LogError(exception, "系統發生未預期錯誤");
+        {
+            
+            ProblemDetails problemDetails; 
 
-            var problemDetails = new ProblemDetails
+            if (exception is InsufficientStockException stockEx)
             {
-                Title = "系統發生錯誤",
-                Detail = exception.Message,
-                Status = (int)HttpStatusCode.InternalServerError,
-                Instance = httpContext.Request.Path
-            };
+                problemDetails = new ProblemDetails
+                {
+                    Title = "庫存不足",
+                    Detail = stockEx.Message,
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Instance = httpContext.Request.Path
+                };
+            }
+            else
+            {
+                _logger.LogError(exception, "系統發生未預期錯誤");
+
+                problemDetails = new ProblemDetails
+                {
+                    Title = "系統發生錯誤",
+                    Detail = exception.Message,
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Instance = httpContext.Request.Path
+                };
+
+            }
+               
 
             httpContext.Response.StatusCode = problemDetails.Status.Value;
             httpContext.Response.ContentType = "application/json";
@@ -37,6 +54,5 @@ namespace Training.API
 
 
         }
-
     }
 }

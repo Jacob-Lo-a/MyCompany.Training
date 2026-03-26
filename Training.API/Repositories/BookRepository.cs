@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,9 @@ namespace Training.Core.Repositories
         {
             await _dbContext.SaveChangesAsync();
         }
-
+        public async Task<Book?> GetByIdAsync(int id)
+        {
+            return await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Training.Core;
+﻿using System.Text.Json;
+using Training.Core;
 using Training.Core.interfaces;
 namespace Training.API.Services
 {
@@ -11,7 +12,7 @@ namespace Training.API.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<string> GetWeatherAsync()
+        public async Task<JsonDocument> GetWeatherAsync()
         {
             var client = _httpClientFactory.CreateClient("CwaClient");
 
@@ -22,9 +23,10 @@ namespace Training.API.Services
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("呼叫氣象 API 失敗");
-            } 
+            }
 
-            return await response.Content.ReadAsStringAsync();
+            var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonDocument.ParseAsync(stream);
         }
     }
 } 
