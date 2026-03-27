@@ -1,4 +1,5 @@
-﻿using Training.API.Repositories;
+﻿using System.Net;
+using Training.API.Repositories;
 using Training.Core.DTOs;
 using Training.Core.interfaces;
 using Training.Core.Models;
@@ -18,64 +19,65 @@ namespace Training.API.Services
         }
         public async Task CreateOrderAsync(CreateOrderRequest request)
         {
-            using var transaction = await _orderRepository.BeginTransactionAsync();
             
-            try
+            var orderItems = new List<OrderItem>();
+            decimal totalAmount = 0;
+            int userId = 0;
+            
+           
+            foreach (var item in request.Items)
             {
-                var orderItems = new List<OrderItem>();
-                decimal totalAmount = 0;
-                int userId = 0;
+                var createBookDetails = item.CreateBookDetails;
 
-                foreach (var item in request.Items)
+                int bookId = 0, quantity = 0;
+                foreach (var detail in createBookDetails)
                 {
-                    var book = await _bookRepository.GetByIdAsync(item.BookId);
-
-                    if (book == null)
-                        throw new Exception($"書籍不存在 (ID: {item.BookId})");
-
-                    // 設定 userId
-                    userId = item.UserId;
-
-                    //  檢查庫存
-                    if (book.Stock < item.Quantity)
-                        throw new InsufficientStockException(book.Title);
-
-                    // 扣庫存
-                    book.Stock -= item.Quantity;
-
-                    var subTotal = book.Price * item.Quantity;
-                    totalAmount += subTotal;
-
-                    //  建立明細
-                    orderItems.Add(new OrderItem
-                    {
-                        BookId = book.Id,
-                        Quantity = item.Quantity,
-                        UnitPrice = book.Price
-                    });
+                    bookId = detail.BookId;
+                    quantity = detail.Quantity;
                 }
 
-                //  建立訂單
-                var order = new Order
+
+                var book = await _bookRepository.GetByIdAsync(bookId);
+                
+                // 判斷書及是否存在
+                if (book == null)
+                    throw new BookNotFoundException(bookId);
+
+                //  檢查庫存
+                if (book.Stock < quantity)
+                    throw new InsufficientStockException(book.Title);
+
+                userId = item.UserId;
+
+                // 扣庫存
+                book.Stock -= quantity;
+
+                var subTotal = book.Price * quantity;
+                totalAmount += subTotal;
+
+                //  建立明細
+                orderItems.Add(new OrderItem
                 {
-                    OrderNumber = Guid.NewGuid().ToString(),
-                    UserId = userId,
-                    TotalAmount = totalAmount,
-                    Status = "Pending",
-                    CreatedAt = DateTime.UtcNow,
-                    OrderItems = orderItems
-                };
-                
-                await _orderRepository.AddAsync(order);
-                await _orderRepository.SaveChangesAsync();
-                
-                await transaction.CommitAsync();
+                    BookId = book.Id,
+                    Quantity = quantity,
+                    UnitPrice = book.Price
+                });
+               
             }
-            catch
+
+            //  建立訂單
+            var order = new Order
             {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                OrderNumber = Guid.NewGuid().ToString(),
+                UserId = userId,
+                TotalAmount = totalAmount,
+                Status = "Pending",
+                CreatedAt = DateTime.UtcNow,
+                OrderItems = orderItems
+            };
+                
+            await _orderRepository.AddAsync(order);
+            
         }
     }
 } 

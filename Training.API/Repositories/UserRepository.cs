@@ -12,7 +12,7 @@ namespace Training.API.Repositories
             _dbContext = dbContext;
         }
 
-        public User? GetUserByAccount(string account)
+        public User GetUserByAccount(string account)
         {
             return _dbContext.Users.FirstOrDefault(u => u.Account == account);
         }

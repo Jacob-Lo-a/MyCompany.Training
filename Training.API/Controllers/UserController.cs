@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Training.Core.interfaces;
 using Training.Core.Services;
-
+using Training.Core.DTOs;
 
 namespace Training.API.Controllers
 {
@@ -21,9 +21,9 @@ namespace Training.API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login([FromBody] LoginRequest request)
         {
-            var user = _userService.ValidateUser(username, password);
+            var user = _userService.ValidateUser(request.Username, request.Password);
 
             
 
@@ -32,7 +32,6 @@ namespace Training.API.Controllers
 
             var claims = new[]
             {
-               
                 new Claim(ClaimTypes.Role, user.Role)
             };
             

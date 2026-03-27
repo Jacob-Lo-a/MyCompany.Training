@@ -160,3 +160,10 @@
    7. `Commit` 交易
 2. 建立一個自定義的例外類別 `InsufficientStockException`，當庫存不足時拋出
 3. 修改 `GlobalExceptionHandler`，當攔截到 `InsufficientStockException` 時，回傳400 Bad Request，並告知前端「某某書本庫存不足」
+
+### 第 20 天：期末實戰 (Part 2) - CORS 與破壞性測試
+1. 在 Program.cs 加上 builder.Services.AddCors(...) 註冊策略
+2. 在 Middleware 管線加上 `app.UseCors("MyPolicy")`，它必須放在 `UseRouting` 之後，`UseAuthorization` 之前
+3. 寫一個前端頁面(localhost:5500) 呼叫後端 API (localhost:7208)，測試 CORS 有沒有成功，讓前端可以呼叫後端的 API
+
+[參考文件](https://learn.microsoft.com/zh-tw/aspnet/core/security/cors?view=aspnetcore-10.0)

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Training.Core.Models;
 
+
 namespace Training.Core.interfaces
 {
     public interface IUserService
@@ -12,4 +13,5 @@ namespace Training.Core.interfaces
         User ValidateUser(string account, string password);
         
     }
+
 }

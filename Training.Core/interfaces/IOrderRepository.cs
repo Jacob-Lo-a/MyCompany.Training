@@ -10,8 +10,7 @@ namespace Training.Core.interfaces
 {
     public interface IOrderRepository
     {
-        Task<IDbContextTransaction> BeginTransactionAsync();
         Task AddAsync(Order order);
-        Task SaveChangesAsync();
+       
     }
 }

@@ -13,19 +13,33 @@ namespace Training.API.Repositories
             _bookStoreDbContext = bookStoreDbContext;
         }
 
-        public async Task<IDbContextTransaction> BeginTransactionAsync()
-        {
-            return await _bookStoreDbContext.Database.BeginTransactionAsync();
-        }
 
+        
         public async Task AddAsync(Order order)
         {
-            await _bookStoreDbContext.Orders.AddAsync(order);
+
+            
+            await using (var transaction = await _bookStoreDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _bookStoreDbContext.Orders.AddAsync(order);
+                    await _bookStoreDbContext.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+
+            }
+            
+            
+
         }
         
-        public async Task SaveChangesAsync()
-        {
-            await _bookStoreDbContext.SaveChangesAsync();
-        }
+        
     }
 }

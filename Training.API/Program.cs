@@ -144,6 +144,16 @@ builder.Services.AddHttpClient("CwaClient", client =>
 
 builder.Services.AddScoped<ITaipeiWeatherService, TaipeiWeatherService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "MyPolicy",
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:5500")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
 
 
 
@@ -161,6 +171,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<RequestLogMiddleware>();
+app.UseCors("MyPolicy");
 
 app.UseExceptionHandler(_ => { });
 app.UseAuthentication(); // ±“•Œ JWT ≈Á√“
