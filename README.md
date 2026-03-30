@@ -167,3 +167,12 @@
 3. 寫一個前端頁面(localhost:5500) 呼叫後端 API (localhost:7208)，測試 CORS 有沒有成功，讓前端可以呼叫後端的 API
 
 [參考文件](https://learn.microsoft.com/zh-tw/aspnet/core/security/cors?view=aspnetcore-10.0)
+
+### 第 21 天：Local 檔案操作與圖片上傳防護
+1. 實作一個 /api/books/{id}/cover (POST) API，用來上傳書籍封面。API 參數需接收 `int id` 與 `IFormFile image`
+2. 實作安全防護邏輯
+   2.1 檢查 `image.Length`，檔案大小不可超過 5MB
+   2.2 檢查 Path.GetExtension(image.FileName)，只能是 `.jpg`, `.jpeg` 或 `.png`
+3. 將檔案用 Guid 重新命名，存入 wwwroot/uploads/covers 資料夾。上傳成功後，將檔案的相對網址（例如 /uploads/covers/abc-123.jpg）更新到該 `Book` 的資料庫欄位中
+
+[參考文件](https://learn.microsoft.com/zh-tw/aspnet/core/mvc/models/file-uploads?view=aspnetcore-8.0)
