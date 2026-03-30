@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,7 @@ namespace Training.Core.interfaces
     {
         List<Book> GetDiscountBooks();
         Task<Book> CreatedBookAsync(CreateBookDto dto);
+
+        Task<string> UploadCoverAsync(int bookId, IFormFile image);
     }
 }

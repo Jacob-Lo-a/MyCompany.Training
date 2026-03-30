@@ -15,6 +15,8 @@ public partial class Book
 
     public int AuthorId { get; set; }
 
+    public string? CoverUrl { get; set; }
+
     public virtual Author Author { get; set; } = null!;
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

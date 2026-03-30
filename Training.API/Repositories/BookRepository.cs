@@ -37,5 +37,15 @@ namespace Training.Core.Repositories
         {
             return await _dbContext.Books.FirstOrDefaultAsync(b => b.Id == id);
         }
+
+        public async Task UpdateCoverAsync(int id, string coverUrl)
+        {
+            var book = await _dbContext.Books.FindAsync(id);
+            if (book != null)
+            {
+                book.CoverUrl = coverUrl;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

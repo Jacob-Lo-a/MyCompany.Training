@@ -19,21 +19,23 @@ namespace Training.Core.Controllers
 {
     [ApiController]
     [Route("api/book/[controller]")]
-    
+
     public class BooksController : ControllerBase
     {
         private readonly IBookService _bookService;
         private readonly ILogger<BooksController> _logger;
         private readonly BookStoreDbContext _bookStoreDbContext;
 
-        public BooksController(IBookService bookService, ILogger<BooksController> logger, BookStoreDbContext bookStoreDbContext)
+
+        public BooksController(IBookService bookService, ILogger<BooksController> logger, BookStoreDbContext bookStoreDbContext, IWebHostEnvironment env)
         {
             _bookService = bookService;
             _logger = logger;
             _bookStoreDbContext = bookStoreDbContext;
+
         }
 
-        
+
         [HttpGet]
         public IActionResult GetBooks()
         {
@@ -72,7 +74,7 @@ namespace Training.Core.Controllers
 
             IQueryable<Book> query = _bookStoreDbContext.Books.AsQueryable();
 
-            
+
 
             //  排序
             query = query.OrderBy(b => b.Id);
@@ -95,5 +97,20 @@ namespace Training.Core.Controllers
             });
         }
 
+        [HttpPost("{id}/cover")]
+        public async Task<IActionResult> UploadCover(int id, IFormFile image)
+        {
+            try
+            {
+                var url = await _bookService.UploadCoverAsync(id, image);
+                return Ok(new { imageUrl = url });
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
     }
 }
