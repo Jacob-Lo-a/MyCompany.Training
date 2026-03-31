@@ -1,13 +1,8 @@
 using FluentValidation;
 using Mapster;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using NLog;
-using NLog.Targets;
 using NLog.Web;
 using Polly;
 using Polly.Extensions.Http;
