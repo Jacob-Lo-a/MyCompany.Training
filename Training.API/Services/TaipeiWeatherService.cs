@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Training.Core;
 using Training.Core.interfaces;
 namespace Training.API.Services
 {

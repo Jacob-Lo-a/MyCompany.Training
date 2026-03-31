@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Training.Core.Models;
+﻿using Training.Core.Models;
 
 namespace Training.Core.interfaces
 {
@@ -14,5 +9,6 @@ namespace Training.Core.interfaces
         Task SaveChangesAsync();
         Task<Book?> GetByIdAsync(int id);
         Task UpdateCoverAsync(int id, string coverUrl);
+        Task<(List<Book> Books, int TotalCount)> GetBooksAsync(BookQueryParameters parameters, CancellationToken ct);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using Training.Core.interfaces;
+﻿using Training.Core.interfaces;
 using Training.Core.Models;
 
 

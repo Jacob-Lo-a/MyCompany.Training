@@ -1,4 +1,4 @@
-﻿namespace Training.API
+﻿namespace Training.API.Exceptions
 {
     public class FileTooLargeException : Exception
     {

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using Training.Core;
+﻿using Microsoft.EntityFrameworkCore;
 using Training.Core.interfaces;
 using Training.Core.Models;
 namespace Training.API.Repositories
@@ -40,6 +39,11 @@ namespace Training.API.Repositories
 
         }
         
-        
+        public async Task<List<Order>> GetAllWithUserAsync()
+        {
+            return await _bookStoreDbContext.Orders
+                        .Include(o => o.User)
+                        .ToListAsync();
+        }
     }
 }

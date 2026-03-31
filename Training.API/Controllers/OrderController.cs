@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using Training.API.Services;
 using Training.Core.DTOs;
 using Training.Core.interfaces;
-using Training.Core.Models;
 
 namespace Training.API.Controllers
 {
@@ -32,6 +29,18 @@ namespace Training.API.Controllers
             {
                 message = "訂單建立成功"
             });
+        }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> Export()
+        {
+            var fileBytes = await _orderService.ExportOrdersAsync();
+
+            return File(
+                fileBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "OrdersReport.xlsx"
+            );
         }
     }
 }

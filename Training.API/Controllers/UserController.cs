@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Training.Core.interfaces;
-using Training.Core.Services;
 using Training.Core.DTOs;
 
 namespace Training.API.Controllers

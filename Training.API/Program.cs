@@ -11,14 +11,10 @@ using NLog.Targets;
 using NLog.Web;
 using Polly;
 using Polly.Extensions.Http;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using Training.API;
+using Training.API.Exceptions;
 using Training.API.Middlewares;
 using Training.API.Repositories;
 using Training.API.Services;
@@ -103,8 +99,6 @@ builder.Services.AddScoped<IBookService, BookService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-
 
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

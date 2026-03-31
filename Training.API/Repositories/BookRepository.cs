@@ -1,10 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Polly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Training.Core.interfaces;
 using Training.Core.Models;
 
@@ -46,6 +40,21 @@ namespace Training.Core.Repositories
                 book.CoverUrl = coverUrl;
                 await _dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<(List<Book> Books, int TotalCount)> GetBooksAsync(BookQueryParameters parameters, CancellationToken ct)
+        {
+            IQueryable<Book> query = _dbContext.Books.AsQueryable();
+
+            query = query.OrderBy(b => b.Id);
+
+            var totalCount = await query.CountAsync(ct);
+
+            var books = await query
+                        .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                        .Take(parameters.PageSize)
+                        .ToListAsync();
+            return (books, totalCount);
         }
     }
 }

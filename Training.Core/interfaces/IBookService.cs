@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Training.Core.DTOs;
+﻿using Training.Core.DTOs;
 using Training.Core.Models;
 
 namespace Training.Core.interfaces
@@ -14,6 +8,7 @@ namespace Training.Core.interfaces
         List<Book> GetDiscountBooks();
         Task<Book> CreatedBookAsync(CreateBookDto dto);
 
-        Task<string> UploadCoverAsync(int bookId, IFormFile image);
+        Task<string> UploadCoverAsync(BookCover bookCover);
+        Task<Object> GetBooksAsync(BookQueryParameters parameters, CancellationToken ct);
     }
 }

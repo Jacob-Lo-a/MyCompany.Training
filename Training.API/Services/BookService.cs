@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Training.API;
-using Training.Core.DTOs;
+﻿using Training.Core.DTOs;
 using Training.Core.interfaces;
 using Training.Core.Models;
-using Training.Core.Repositories;
+using Training.API.Exceptions;
 
 namespace Training.Core.Services
 {
@@ -47,36 +41,29 @@ namespace Training.Core.Services
             return book;
         }
 
-        public async Task<string> UploadCoverAsync(int bookId, IFormFile image)
+        public async Task<string> UploadCoverAsync(BookCover bookCover)
         {
-            var book = await _bookRepository.GetByIdAsync(bookId);
+            var book = await _bookRepository.GetByIdAsync(bookCover.BookId);
 
             if (book == null)
             {
-                throw new BookNotFoundException(bookId);
+                throw new BookNotFoundException(bookCover.BookId);
             }
             // 檔案大小不超過 5MB
-            if (image.Length > 5 * 1024 * 1024)
+            if (bookCover.Image.Length > 5 * 1024 * 1024)
             {
                 throw new FileTooLargeException();
             }
 
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-            var ext = Path.GetExtension(image.FileName).ToLower(); // 取得副檔名
+            var ext = Path.GetExtension(bookCover.Image.FileName).ToLower(); // 取得副檔名
 
             if (!allowedExtensions.Contains(ext))
             {
-                throw new Exception("Invalid file type");
+                throw new InvalidFileTypeException();
             }
 
-            // 避免出現 Value cannot be null (path1)
-            var webRoot = _env.WebRootPath;
-            if (string.IsNullOrEmpty(webRoot)) 
-            {
-                webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            }
-
-            var uploadPath = Path.Combine(webRoot, "uploads", "covers");
+            var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "covers");
 
             if (!Directory.Exists(uploadPath))
             {
@@ -88,13 +75,28 @@ namespace Training.Core.Services
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                await image.CopyToAsync(stream);
+                await bookCover.Image.CopyToAsync(stream);
             }
 
             var relativePath = $"/uploads/covers/{fileName}";
 
-            await _bookRepository.UpdateCoverAsync(bookId, relativePath);
+            await _bookRepository.UpdateCoverAsync(bookCover.BookId, relativePath);
             return relativePath;
+        }
+        public async Task<object> GetBooksAsync(BookQueryParameters parameters, CancellationToken ct)
+        {
+
+            parameters.PageSize = Math.Min(parameters.PageSize, 50);
+
+            var (books, totalCount) = await _bookRepository.GetBooksAsync(parameters, ct);
+
+            return new
+            {
+                Total = totalCount,
+                PageNumber = parameters.PageNumber,
+                PageSize = parameters.PageSize,
+                Data = books
+            };
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System.Net;
-using Training.API.Repositories;
-using Training.Core.DTOs;
+﻿using Training.Core.DTOs;
 using Training.Core.interfaces;
 using Training.Core.Models;
-using Training.Core.Repositories;
+using Training.API.Exceptions;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace Training.API.Services
 {
@@ -79,5 +79,46 @@ namespace Training.API.Services
             await _orderRepository.AddAsync(order);
             
         }
+
+        public async Task<byte[]> ExportOrdersAsync()
+        {
+            var orders = await _orderRepository.GetAllWithUserAsync();
+
+            IWorkbook workbook = new XSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("訂單報表");
+
+            IRow headerRow = sheet.CreateRow(0);
+            headerRow.CreateCell(0).SetCellValue("訂單編號");
+            headerRow.CreateCell(1).SetCellValue("總金額");
+            headerRow.CreateCell(2).SetCellValue("購買人帳號");
+            headerRow.CreateCell(3).SetCellValue("建立時間");
+
+            int rowIndex = 1;
+            
+            foreach (var order in orders)
+            {
+                IRow row = sheet.CreateRow(rowIndex);
+
+                row.CreateCell(0).SetCellValue(order.OrderNumber);
+                row.CreateCell(1).SetCellValue((double)order.TotalAmount);
+                row.CreateCell(2).SetCellValue(order.User?.Account ?? "");
+                row.CreateCell(3).SetCellValue(
+                    order.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                );
+
+                rowIndex++;
+            }
+
+            // 調整欄位大小
+            for (int i = 0; i < 4; i++)
+            {
+                sheet.AutoSizeColumn(i);
+            }
+
+            using var ms = new MemoryStream();
+            workbook.Write(ms);
+            
+            return ms.ToArray();
+        }
     }
-} 
+}

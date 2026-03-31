@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Query.Internal;
 
-namespace Training.API
+namespace Training.API.Exceptions
 {
     public class InsufficientStockException : Exception
     {

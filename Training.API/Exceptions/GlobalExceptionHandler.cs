@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Training.API
+namespace Training.API.Exceptions
 {
     public class GlobalExceptionHandler : IExceptionHandler 
     {
