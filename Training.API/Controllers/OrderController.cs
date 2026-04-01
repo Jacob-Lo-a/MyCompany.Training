@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.HPSF;
 using Training.Core.DTOs;
 using Training.Core.interfaces;
 
@@ -11,10 +12,12 @@ namespace Training.API.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly ISftpService _sftpService;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, ISftpService sftpService)
         {
             _orderService = orderService;
+            _sftpService = sftpService;
         }
 
         [Authorize(Roles = "User")]
@@ -41,6 +44,29 @@ namespace Training.API.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "OrdersReport.xlsx"
             );
+        }
+
+        [HttpPost("send-report")]
+        public async Task<IActionResult> SendReport()
+        {
+            var fileBytes = await _orderService.ExportOrdersAsync();
+
+            var fileName = $"OrderReport_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+
+            await _sftpService.UploadReportAsync(fileBytes, fileName);
+
+            return Ok(new { message = "檔案已成功上傳" });
+        }
+
+        [HttpPost("upload-File")]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            await _sftpService.UploadFileAsync(file);
+            return Ok(new 
+            { 
+                message = "檔案已成功上傳",
+                FileName = file.FileName
+            });
         }
     }
 }

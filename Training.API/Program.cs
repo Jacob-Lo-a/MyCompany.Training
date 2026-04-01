@@ -66,7 +66,7 @@ builder.Services.AddSingleton<Class1>();
 builder.Services.AddSingleton<Linq>();
 builder.Services.AddSingleton<Async>();
 builder.Services.AddScoped<IGuidGenerator, MyGuidGenerator>();
-builder.Services.Configure<EmailOptions>(
+builder.Services.Configure<Emailsettings>(
     builder.Configuration.GetSection("EmailSettings")
 );
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -144,7 +144,10 @@ builder.Services.AddCors(options =>
                       });
 });
 
+builder.Services.Configure<SftpSettings>(
+    builder.Configuration.GetSection("SftpSettings"));
 
+builder.Services.AddScoped<ISftpService, SftpService>();
 
 var app = builder.Build();
 
@@ -245,7 +248,7 @@ app.MapGet("/guid", (IGuidGenerator g1, IGuidGenerator g2) =>
 .WithName("guidTest")
 .WithOpenApi();
 
-app.MapGet("/email", (IOptions<EmailOptions> options) =>
+app.MapGet("/email", (IOptions<Emailsettings> options) =>
 {
     return options.Value;
 })

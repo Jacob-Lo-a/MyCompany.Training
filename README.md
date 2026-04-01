@@ -183,3 +183,10 @@
 3. 使用 NPOI 產生 Excel。手動建立標題列 (訂單編號, 總金額, 購買人帳號, 建立時間)。使用 foreach 迴圈，動態追蹤 rowIndex，呼叫 sheet.CreateRow(rowIndex) 將訂單資料一行一行填入後續的儲存格中。最後將 Excel 檔案回傳給前端下載
 
 [參考文件](https://github.com/nissl-lab/npoi)
+
+### 第 23 天：SFTP 跨伺服器安全傳輸
+1. 在 `appsettings.json` 中設定一組 SFTP 連線資訊 (包含 Host, Port, Username, Password)
+2. 建立 `ISftpService`，實作一個 UploadReportAsync(byte[] fileData, string remoteFileName) 方法
+3. 把 Day 22 的匯出 Excel 功能複製一份改寫為 /api/orders/send-report (POST)。API 使用 NPOI 產出 Excel 後，將 Excel 轉為 Stream，呼叫 SftpService 將報表上傳到遠端的特定資料夾中
+
+[參考文件](https://sshnet.github.io/SSH.NET/api/Renci.SshNet.SftpClient.html)

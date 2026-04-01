@@ -41,8 +41,9 @@ namespace Training.API.Repositories
         
         public async Task<List<Order>> GetAllWithUserAsync()
         {
+           
             return await _bookStoreDbContext.Orders
-                        .Include(o => o.User)
+                        .Include("User")
                         .ToListAsync();
         }
     }
