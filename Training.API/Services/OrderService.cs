@@ -1,9 +1,10 @@
-﻿using Training.Core.DTOs;
-using Training.Core.interfaces;
-using Training.Core.Models;
-using Training.API.Exceptions;
+﻿using Hangfire;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Training.API.Exceptions;
+using Training.Core.DTOs;
+using Training.Core.interfaces;
+using Training.Core.Models;
 
 namespace Training.API.Services
 {
@@ -78,6 +79,9 @@ namespace Training.API.Services
                 
             await _orderRepository.AddAsync(order);
             
+            BackgroundJob.Enqueue<EmailService>(
+                x => x.SendOrderEmailAsync(order.Id)
+            );
         }
 
         public async Task<byte[]> ExportOrdersAsync()

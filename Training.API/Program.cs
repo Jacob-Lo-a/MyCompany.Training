@@ -1,4 +1,5 @@
 using FluentValidation;
+using Hangfire;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -149,6 +150,14 @@ builder.Services.Configure<SftpSettings>(
 
 builder.Services.AddScoped<ISftpService, SftpService>();
 
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("BookStoreDB")));
+
+builder.Services.AddScoped<EmailService>();
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 
@@ -167,7 +176,9 @@ app.UseCors("MyPolicy");
 
 app.UseExceptionHandler(_ => { });
 app.UseAuthentication(); // ±Ò¥Î JWT ÅçÃÒ
-app.UseAuthorization();  
+app.UseAuthorization();
+
+app.UseHangfireDashboard();
 app.MapControllers();
 
 app.MapGet("/system-info", (Class1 systemInfo) =>

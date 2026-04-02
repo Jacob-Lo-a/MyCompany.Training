@@ -190,3 +190,10 @@
 3. 把 Day 22 的匯出 Excel 功能複製一份改寫為 /api/orders/send-report (POST)。API 使用 NPOI 產出 Excel 後，將 Excel 轉為 Stream，呼叫 SftpService 將報表上傳到遠端的特定資料夾中
 
 [參考文件](https://sshnet.github.io/SSH.NET/api/Renci.SshNet.SftpClient.html)
+
+### 第 24 天：背景排程任務 (Hangfire) - 基礎與射後不理
+1. 完成 Hangfire 的基礎安裝。啟動專案，在瀏覽器網址列輸入 /hangfire，進入並欣賞精美的 Hangfire 管理後台。觀察資料庫是否自動長出了好幾張 Hangfire 專用的資料表
+2. 寫一個「發送訂單確認信」的假 Service，裡面只寫 `Task.Delay(3000)` 來模擬耗時寄信動作
+3. 修改第四週寫的「結帳建立訂單 API」。當訂單建立成功 (Transaction Commit) 後，不要用 `await` 去等待寄信方法，而是使用 `BackgroundJob.Enqueue` 把寄信任務丟給 Hangfire，並立刻回傳 200 OK 給前端。去儀表板的「作業」分頁，觀察這個任務的執行軌跡
+
+[參考文件](https://www.hangfire.io/features.html)
