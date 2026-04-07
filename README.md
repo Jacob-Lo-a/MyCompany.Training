@@ -197,3 +197,12 @@
 3. 修改第四週寫的「結帳建立訂單 API」。當訂單建立成功 (Transaction Commit) 後，不要用 `await` 去等待寄信方法，而是使用 `BackgroundJob.Enqueue` 把寄信任務丟給 Hangfire，並立刻回傳 200 OK 給前端。去儀表板的「作業」分頁，觀察這個任務的執行軌跡
 
 [參考文件](https://www.hangfire.io/features.html)
+
+### 第 25 天：Hangfire 進階 - 定期排程 (Cron) 與期末大統整
+1. 在 `IOrderService` 建立一個 `SyncDailySalesReportAsync()` 方法
+2. 方法必須完成以下流程
+   2.1 去資料庫撈取 「昨天」 的所有訂單資料
+   2.2 使用 NPOI 產生一份名為 DailySales_20260407.xlsx 的 Excel 報表 Stream
+   2.3 使用 SSH.NET 將這份 Excel 報表上傳到外部伺服器
+   2.4 如果中間遇到斷線拋出 Exception，Hangfire 會自動捕捉並按照預設機制進行 Retry
+3. 在 Program.cs 設定 RecurringJob 註冊上述方法。啟動專案，打開 Hangfire Dashboard，切換到「定期作業 (Recurring Jobs)」分頁，選中該任務並按下「Trigger Now (立即觸發)」進行手動驗收

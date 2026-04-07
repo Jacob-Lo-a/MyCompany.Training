@@ -6,5 +6,6 @@ namespace Training.Core.interfaces
     {
         Task CreateOrderAsync(CreateOrderRequest request);
         Task<byte[]> ExportOrdersAsync();
+        Task SyncDailySalesReportAsync();
     }
 }

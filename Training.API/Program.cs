@@ -406,4 +406,10 @@ app.MapPost("/Transaction", async (
 .WithOpenApi();
 
 
+RecurringJob.AddOrUpdate<IOrderService>(
+    "Daily-Sales-Report",
+    service => service.SyncDailySalesReportAsync(),
+    Cron.Daily(2) // 每天凌晨 2 點執行
+);
+
 app.Run(); 

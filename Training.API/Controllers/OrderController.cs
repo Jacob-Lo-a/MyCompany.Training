@@ -68,5 +68,15 @@ namespace Training.API.Controllers
                 FileName = file.FileName
             });
         }
+
+        [HttpPost("daily-report")]
+        public async Task<IActionResult> DailyReport()
+        {
+            await _orderService.SyncDailySalesReportAsync();
+
+            return Ok(new { message = "檔案已成功上傳" });
+        }
+
+
     }
 }

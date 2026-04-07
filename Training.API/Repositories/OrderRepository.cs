@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Polly;
 using Training.Core.interfaces;
 using Training.Core.Models;
 namespace Training.API.Repositories
@@ -45,6 +46,14 @@ namespace Training.API.Repositories
             return await _bookStoreDbContext.Orders
                         .Include("User")
                         .ToListAsync();
+        }
+
+        public async Task<List<Order>> GetByDateRangeAsync(DateTime start, DateTime end)
+        {
+            return await _bookStoreDbContext.Orders
+                .Include("User")
+                .Where(o => o.CreatedAt >= start && o.CreatedAt < end)
+                .ToListAsync();
         }
     }
 }
